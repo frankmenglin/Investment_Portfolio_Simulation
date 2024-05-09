@@ -1,6 +1,124 @@
 from typing import List
 import numpy as np
 
+def generate_gbm(T, timestep, mu, sigma, S0=1):
+    """
+    Generates a geometric Brownian motion time series.
+
+    :param T: Total number of time periods (equivalent to number of steps - 1)
+    :param timestep: The size of each time step in years
+    :param mu: Annualized return (drift coefficient)
+    :param sigma: Annualized volatility
+    :param S0: Initial value of the time series (default 1)
+    :return: TimeSeries object with generated GBM values
+    """
+    # Total number of steps
+    N = T + 1
+    times = np.linspace(0, T * timestep, N)
+    steps = np.random.normal(loc=(mu - 0.5 * sigma**2) * timestep,
+                         scale=sigma * np.sqrt(timestep),
+                         size=T)
+    # S0 * exp(cumulative sum of steps)
+    values = S0 * np.exp(np.cumsum(steps))
+    values = np.insert(values, 0, S0)  # Include the initial value at the start
+
+    return TimeSeries(timestep, list(values))
+
+def generate_brownian_motion(T, timestep, mu, sigma, S0=0):
+    """
+    Generates a Brownian motion time series.
+
+    :param T: Total number of time periods (equivalent to number of steps - 1)
+    :param timestep: The size of each time step in years
+    :param mu: Mean of the increments (often zero in pure Brownian motion)
+    :param sigma: Volatility or standard deviation of the increments
+    :param S0: Initial value of the time series (default 0)
+    :return: TimeSeries object with generated Brownian motion values
+    """
+    # Total number of steps
+    N = T + 1
+    times = np.linspace(0, T * timestep, N)
+    increments = np.random.normal(loc=mu * timestep,
+                                  scale=sigma * np.sqrt(timestep),
+                                  size=T)
+    # Cumulative sum of increments to get the Brownian path
+    values = np.cumsum(increments)
+    values = np.insert(values, 0, S0)  # Include the initial value at the start
+
+    return TimeSeries(timestep, list(values))
+    
+def generate_gbm_set(T, timestep, mu, sigma, correlation, S0=None):
+    n = len(mu)  # Number of series
+    if S0 is None:
+        S0 = np.ones(n)  # Default initial values
+    # Validate dimensions
+    if len(sigma) != n or correlation.shape != (n, n) or (S0 is not None and len(S0) != n):
+        raise ValueError("Dimensions of inputs do not match or are incorrect.")
+    # Check if correlation matrix is valid
+    if not (np.allclose(correlation, correlation.T) and np.all(np.linalg.eigvals(correlation) >= 0)):
+        raise ValueError("Correlation matrix must be symmetric and positive semi-definite.")
+
+    # Cholesky decomposition of the correlation matrix
+    L = np.linalg.cholesky(correlation)
+
+    # Total number of steps
+    N = T + 1
+
+    # Initialize array to hold the GBM paths
+    paths = np.zeros((N, n))
+    paths[0, :] = S0  # Set initial values
+
+    # Generate paths
+    for t in range(1, N):
+        # Independent normal random variables
+        Z = np.random.normal(size=n)
+        # Correlated random variables
+        correlated_Z = L @ Z
+        # Calculate GBM step for each series
+        step = (mu - 0.5 * sigma**2) * timestep + sigma * np.sqrt(timestep) * correlated_Z
+        paths[t, :] = paths[t-1, :] * np.exp(step)
+
+    # Create TimeSeries objects
+    time_series_list = [TimeSeries(timestep, list(paths[:, i])) for i in range(n)]
+
+    return time_series_list
+
+def generate_brownian_motion_set(T, timestep, mu, sigma, correlation, S0=None):
+    n = len(mu)  # Number of series
+    if S0 is None:
+        S0 = np.ones(n)  # Default initial values
+    # Validate dimensions
+    if len(sigma) != n or correlation.shape != (n, n) or (S0 is not None and len(S0) != n):
+        raise ValueError("Dimensions of inputs do not match or are incorrect.")
+    # Check if correlation matrix is valid
+    if not (np.allclose(correlation, correlation.T) and np.all(np.linalg.eigvals(correlation) >= 0)):
+        raise ValueError("Correlation matrix must be symmetric and positive semi-definite.")
+
+    # Cholesky decomposition of the correlation matrix
+    L = np.linalg.cholesky(correlation)
+
+    # Total number of steps
+    N = T + 1
+
+    # Initialize array to hold the Brownian motion paths
+    paths = np.zeros((N, n))
+    paths[0, :] = S0  # Set initial values
+
+    # Generate paths
+    for t in range(1, N):
+        # Independent normal random variables
+        Z = np.random.normal(size=n)
+        # Correlated random variables
+        correlated_Z = L @ Z
+        # Calculate Brownian motion step for each series
+        step = mu * timestep + sigma * np.sqrt(timestep) * correlated_Z
+        paths[t, :] = paths[t-1, :] + step
+
+    # Create TimeSeries objects
+    time_series_list = [TimeSeries(timestep, list(paths[:, i])) for i in range(n)]
+
+    return time_series_list
+
 class TimeSeries:
     def __init__(self, time_step: float, values: List[float]):
         """
@@ -95,7 +213,7 @@ class TimeSeries:
         # Annualized return
         annualized_return = roi ** (1 / total_time_horizon)
 
-        return annualized_return
+        return annualized_return - 1.0
     
 
 
@@ -162,50 +280,5 @@ class TimeSeries:
             Current_Max_Drawdown = max(Current_Max_Drawdown, drawdown)
 
         return Current_Max_Drawdown
-    
-    def generate_gbm(T, timestep, mu, sigma, S0=1):
-        """
-        Generates a geometric Brownian motion time series.
-
-        :param T: Total number of time periods (equivalent to number of steps - 1)
-        :param timestep: The size of each time step in years
-        :param mu: Annualized return (drift coefficient)
-        :param sigma: Annualized volatility
-        :param S0: Initial value of the time series (default 1)
-        :return: TimeSeries object with generated GBM values
-        """
-        # Total number of steps
-        N = T + 1
-        times = np.linspace(0, T * timestep, N)
-        steps = np.random.normal(loc=(mu - 0.5 * sigma**2) * timestep,
-                             scale=sigma * np.sqrt(timestep),
-                             size=T)
-        # S0 * exp(cumulative sum of steps)
-        values = S0 * np.exp(np.cumsum(steps))
-        values = np.insert(values, 0, S0)  # Include the initial value at the start
-
-        return TimeSeries(timestep, list(values))
-
-    def generate_brownian_motion(T, timestep, mu, sigma, S0=0):
-        """
-        Generates a Brownian motion time series.
-
-        :param T: Total number of time periods (equivalent to number of steps - 1)
-        :param timestep: The size of each time step in years
-        :param mu: Mean of the increments (often zero in pure Brownian motion)
-        :param sigma: Volatility or standard deviation of the increments
-        :param S0: Initial value of the time series (default 0)
-        :return: TimeSeries object with generated Brownian motion values
-        """
-        # Total number of steps
-        N = T + 1
-        times = np.linspace(0, T * timestep, N)
-        increments = np.random.normal(loc=mu * timestep,
-                                      scale=sigma * np.sqrt(timestep),
-                                      size=T)
-        # Cumulative sum of increments to get the Brownian path
-        values = np.cumsum(increments)
-        values = np.insert(values, 0, S0)  # Include the initial value at the start
-
-        return TimeSeries(timestep, list(values))
-        
+  
+  

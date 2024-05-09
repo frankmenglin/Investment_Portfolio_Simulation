@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\cyclo\\Desktop\\GitHub Local\\Investment_Portfolio_Simulation\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{EB9A83F3-08C7-4018-A085-601CF340C0C7}|Portfolio Simulator.pyproj|C:\\Users\\cyclo\\Desktop\\GitHub Local\\Investment_Portfolio_Simulation\\Portfolio_Simulator.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{EB9A83F3-08C7-4018-A085-601CF340C0C7}|Portfolio Simulator.pyproj|solutionrelative:Portfolio_Simulator.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EB9A83F3-08C7-4018-A085-601CF340C0C7}|Portfolio Simulator.pyproj|C:\\Users\\cyclo\\Desktop\\GitHub Local\\Investment_Portfolio_Simulation\\TimeSeries.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{EB9A83F3-08C7-4018-A085-601CF340C0C7}|Portfolio Simulator.pyproj|solutionrelative:TimeSeries.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TimeSeries.py",
+              "DocumentMoniker": "C:\\Users\\cyclo\\Desktop\\GitHub Local\\Investment_Portfolio_Simulation\\TimeSeries.py",
+              "RelativeDocumentMoniker": "TimeSeries.py",
+              "ToolTip": "C:\\Users\\cyclo\\Desktop\\GitHub Local\\Investment_Portfolio_Simulation\\TimeSeries.py",
+              "RelativeToolTip": "TimeSeries.py",
+              "ViewState": "AQIAAOYAAAAAAAAAAAAuwPIAAAALAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2024-05-09T18:33:37.234Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Portfolio_Simulator.py",
+              "DocumentMoniker": "C:\\Users\\cyclo\\Desktop\\GitHub Local\\Investment_Portfolio_Simulation\\Portfolio_Simulator.py",
+              "RelativeDocumentMoniker": "Portfolio_Simulator.py",
+              "ToolTip": "C:\\Users\\cyclo\\Desktop\\GitHub Local\\Investment_Portfolio_Simulation\\Portfolio_Simulator.py",
+              "RelativeToolTip": "Portfolio_Simulator.py",
+              "ViewState": "AQIAAAsAAAAAAAAAAAAuwBYAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2024-05-09T18:32:26.116Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
